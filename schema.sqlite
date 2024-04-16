@@ -1,0 +1,21 @@
+CREATE TABLE "authors" (
+	"UID"	INTEGER NOT NULL,
+	"username"	INTEGER NOT NULL UNIQUE,
+	"display_name"	INTEGER NOT NULL,
+
+	PRIMARY KEY("UID")
+);
+
+CREATE TABLE "messages" (
+	"MID"	INTEGER NOT NULL UNIQUE,
+	"content"	TEXT NOT NULL,
+	"UID"	TEXT NOT NULL,
+	"time_sent"	REAL NOT NULL,
+	"is_reply"	INTEGER NOT NULL,
+    "reply_to"	INTEGER,
+	"author_level"	INTEGER,
+
+
+	FOREIGN KEY("UID") REFERENCES authors,
+	PRIMARY KEY("MID")
+);
