@@ -29,7 +29,7 @@ async def get_author_username(UID: int) -> str:
     
     # use discord.py to get the username
     user: discord.User = await clientholder.client.fetch_user(UID)
-    return user.global_name or "Unknown"
+    return user.name or "Unknown"
 
 async def get_author_display_name(UID: int) -> str:
     if not isinstance(UID, int):
@@ -42,15 +42,13 @@ async def get_author_display_name(UID: int) -> str:
 
 
 @conncheckwrapper
-async def log_new_author(UID: int, username: str, display_name: str):
+async def log_new_author(UID: int, username: str):
     if not isinstance(UID, int):
         raise TypeError('UID must be an integer')
     if not isinstance(username, str):
         raise TypeError('username must be a string')
-    if not isinstance(display_name, str):
-        raise TypeError('display_name must be a string')
     
-    await conn.execute('INSERT INTO authors (UID, username, display_name) VALUES (?, ?, ?)', (UID, username, display_name))
+    await conn.execute('INSERT INTO authors (UID, username, log_date) VALUES (?, ?, ?)', (UID, username, time.time()))
     await conn.commit()
 
 @conncheckwrapper
@@ -74,8 +72,7 @@ async def log_new_message(MID: int, content: str, author_UID: int, is_reply: boo
     check_author_exists = await check_author_exists.fetchall()
     if len(check_author_exists) == 0:
         username = await get_author_username(author_UID)
-        display_name = await get_author_display_name(author_UID)
-        await log_new_author(author_UID, username, display_name)
+        await log_new_author(author_UID, username)
         await conn.commit()
     
     if is_reply:
@@ -106,3 +103,10 @@ async def get_total_messages_from_author(UID: int):
     result = await conn.execute('SELECT COUNT(*) FROM messages WHERE UID = ?', (UID,))
     result = await result.fetchone()
     return result[0]
+
+@conncheckwrapper
+async def run_query(query: str):
+    print(f"running {query}")
+    result = await conn.execute(query)
+    result = await result.fetchall()
+    return result

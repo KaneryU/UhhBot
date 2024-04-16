@@ -1,10 +1,11 @@
 import discord
 import json
+import time
 
 running = False
 client: discord.Client = None # type: ignore
 intent: discord.Intents = None # type: ignore
-
+start_time = None
 def init_client():
     global running, client, intents
     intents = discord.Intents.default()
@@ -17,9 +18,11 @@ def init_client():
     
     
 def run():
-    global running, client
+    global running, client, start_time
     with open('token.json') as f:
         token = json.loads(f.read())['token']
     
     running = True
+    start_time = time.time()
     client.run(token)
+    

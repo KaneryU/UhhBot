@@ -1,8 +1,7 @@
 CREATE TABLE "authors" (
 	"UID"	INTEGER NOT NULL,
-	"username"	INTEGER NOT NULL UNIQUE,
-	"display_name"	INTEGER NOT NULL,
-
+	"username"	INTEGER NOT NULL,
+	"log_date" REAL NOT NULL,
 	PRIMARY KEY("UID")
 );
 
