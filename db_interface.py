@@ -105,6 +105,17 @@ async def get_total_messages_from_author(UID: int):
     return result[0]
 
 @conncheckwrapper
+async def author_message_count() -> str:
+    result = await conn.execute('SELECT a.UID, a.USERNAME, COUNT(m.UID) AS message_count FROM authors a LEFT JOIN messages m ON a.UID = m.UID GROUP BY a.UID, a.username ORDER BY a.UID;')
+    result = await result.fetchall()
+    i: tuple
+
+    lines = []
+    for i in result:
+        lines.append(f'{i[1]} has sent {i[2]} messages\n')
+    return lines
+
+@conncheckwrapper
 async def run_query(query: str):
     print(f"running {query}")
     result = await conn.execute(query)
